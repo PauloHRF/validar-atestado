@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Validação de Documentação Digital</title>
+<link rel="stylesheet" href="estilo.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%23434c5c'/><path d='M4 8.4l2.6 2.6L12 5.6' stroke='%23fff' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo-interno">
+    <span class="topo-espacador compensa" aria-hidden="true"></span>
+    <span class="topo-titulo">Validação de <strong>Documentação Digital</strong></span>
+    <span class="topo-espacador compensa" id="topo-vazio" aria-hidden="true"></span>
+    <button type="button" class="botao-topo oculto nao-imprimir" id="btn-nova">Nova consulta</button>
+  </div>
+</header>
+
+<div class="faixa oculto" id="faixa" role="status">
+  <span class="faixa-icone" id="faixa-icone" aria-hidden="true"></span>
+  <span id="faixa-texto"></span>
+</div>
+
+<main>
+
+  <!-- Carregando as chaves públicas -->
+  <p class="chamada" id="carregando">Carregando…</p>
+
+  <!-- Sem as chaves públicas nada pode ser conferido -->
+  <section class="oculto" id="falha-chaves">
+    <div class="cartao">
+      <p class="cartao-titulo">Não foi possível carregar as chaves de verificação</p>
+      <p id="falha-chaves-detalhe" class="dica" style="margin-bottom:1rem"></p>
+      <p style="margin:0">Recarregue a página. Se o problema continuar, procure quem emitiu o documento —
+      <strong>esta falha não significa que o documento seja falso</strong>.</p>
+    </div>
+  </section>
+
+  <!-- Tela 1: consulta -->
+  <section class="oculto" id="tela-consulta">
+    <p class="chamada">Para acessar a documentação digital, informe abaixo:</p>
+    <form class="coluna" id="form-consulta" novalidate>
+      <label for="codigo">Chave de validação (obrigatório)</label>
+      <input type="text" id="codigo" class="campo-chave" inputmode="numeric"
+             autocomplete="off" spellcheck="false" autocapitalize="off"
+             enterkeyhint="go" maxlength="19" placeholder="0000-0000-0000-0000">
+      <p class="erro-campo" id="erro-entrada" role="alert"></p>
+      <button type="submit" class="botao-principal" id="btn-verificar">Próximo</button>
+      <p class="dica" style="text-align:center;margin-top:1.25rem">
+        São os 16 dígitos impressos no documento. Apontar a câmera do celular para o QR Code
+        preenche este campo automaticamente.
+      </p>
+    </form>
+  </section>
+
+  <!-- Tela 2: resultado -->
+  <section class="oculto" id="tela-resultado">
+    <p class="chamada" id="resumo"></p>
+
+    <div class="cartao">
+      <p class="cartao-titulo">Dados do atendimento</p>
+      <dl class="dados-doc" id="dados"></dl>
+    </div>
+
+    <p class="dica nao-imprimir" style="margin-top:-.75rem">
+      Compare item por item com o documento em mãos. Qualquer divergência indica que o papel foi alterado.
+    </p>
+
+    <div class="aviso nao-imprimir" id="aviso-privacidade">
+      <p>Esta tela mostra dados de saúde. Ao terminar, use <strong>Nova consulta</strong> para apagá-los
+      da tela e do endereço do navegador — especialmente em computador compartilhado.</p>
+    </div>
+
+    <div class="acoes-direita nao-imprimir">
+      <button type="button" class="botao-secundario" id="btn-imprimir">Imprimir comprovante</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="rodape nao-imprimir">
+  <p style="margin:0">Conferência por assinatura digital, feita no seu navegador.</p>
+  <p style="margin:.35rem 0 0">Nenhum dado é enviado ou armazenado.</p>
+</footer>
+
+<script type="module" src="validar.js"></script>
+</body>
+</html>

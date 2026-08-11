@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Emissão de código de atestado</title>
+<link rel="stylesheet" href="../estilo.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128394;</text></svg>">
+</head>
+<body>
+
+<header class="topo nao-imprimir">
+  <div class="topo-interno">
+    <span class="topo-titulo">Emissão de <strong>Documentação Digital</strong></span>
+  </div>
+</header>
+
+<main>
+
+  <p class="chamada nao-imprimir" style="margin-bottom:1.75rem">
+    Gera o QR Code e o código de verificação para imprimir no atestado.
+  </p>
+
+  <div class="aviso nao-imprimir">
+    <p><strong>Uso interno.</strong> Esta página só emite códigos para quem tem a chave privada da entidade. Sem a chave ela não faz nada — mas a chave, se vazar, permite forjar atestados válidos. Carregue-a apenas em computador de confiança.</p>
+  </div>
+
+  <!-- Chave de assinatura -->
+  <section class="cartao nao-imprimir">
+    <h2>Chave de assinatura</h2>
+    <p id="status-chave" class="dica" style="margin:0 0 .9rem">Verificando…</p>
+
+    <div id="area-carregar">
+      <label for="arquivo-chave">Arquivo da chave privada (<code>chaves-privadas/&lt;kid&gt;.json</code>)</label>
+      <input type="file" id="arquivo-chave" accept="application/json,.json">
+      <p class="dica">
+        A chave é guardada neste navegador em formato não-extraível: depois de carregada,
+        nem esta página consegue lê-la de volta — só usá-la para assinar. Ela não é enviada
+        a lugar nenhum.
+      </p>
+      <p class="dica" id="erro-chave" role="alert"></p>
+    </div>
+
+    <div class="acoes">
+      <button type="button" id="btn-esquecer" class="oculto">Remover chave deste navegador</button>
+    </div>
+  </section>
+
+  <!-- Configuração -->
+  <section class="cartao nao-imprimir">
+    <h2>Endereço da página de validação</h2>
+    <label for="url-base">URL que o QR Code vai abrir</label>
+    <input type="url" id="url-base" placeholder="https://suaconta.github.io/validar-atestado/" autocomplete="off">
+    <p class="dica">É o endereço do GitHub Pages onde a página de verificação está publicada. Fica salvo neste navegador.</p>
+  </section>
+
+  <!-- Dados do atestado -->
+  <section class="cartao nao-imprimir">
+    <h2>Dados do atestado</h2>
+    <form id="form">
+      <div class="grade">
+        <div class="largo">
+          <label for="f-pac">Paciente *</label>
+          <input type="text" id="f-pac" maxlength="45" required autocomplete="off">
+          <p class="dica"><span id="cont-pac">0</span>/45 caracteres</p>
+        </div>
+        <div class="largo">
+          <label for="f-prof">Médico *</label>
+          <input type="text" id="f-prof" maxlength="45" required autocomplete="off">
+          <p class="dica"><span id="cont-prof">0</span>/45 caracteres</p>
+        </div>
+        <div>
+          <label for="f-em">Data da consulta *</label>
+          <input type="date" id="f-em" required>
+        </div>
+      </div>
+
+      <p class="dica" style="margin-top:1rem">
+        São os únicos três campos que existem. O que não está aqui não vai para o código —
+        e portanto não fica embutido no QR.
+      </p>
+
+      <p class="dica erro-campo" id="erro-form" role="alert"></p>
+
+      <div class="acoes">
+        <button type="submit" class="primario" id="btn-emitir">Gerar código</button>
+        <button type="button" id="btn-limpar-form">Limpar campos</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Saída -->
+  <section id="saida" class="cartao oculto">
+    <h2 class="nao-imprimir">Chave de validação</h2>
+
+    <p class="chave-grande" id="chave-grande"></p>
+
+    <div class="aviso nao-imprimir">
+      <p><strong>Anote a chave agora.</strong> Ela não fica guardada em lugar nenhum em texto
+      claro — nem aqui, nem no arquivo publicado. Perdida a chave, o registro correspondente
+      não pode mais ser aberto por ninguém.</p>
+    </div>
+
+    <p class="dica nao-imprimir" style="margin-bottom:1rem">
+      Imprima o bloco abaixo no atestado. <span id="info-qr"></span>
+    </p>
+
+    <div class="selo" id="selo">
+      <div class="qr" id="qr"></div>
+      <div class="texto">
+        <strong>VERIFIQUE A AUTENTICIDADE DESTE ATESTADO</strong>
+        <span id="selo-url"></span>
+        <div class="chave" id="selo-chave"></div>
+      </div>
+    </div>
+
+    <div class="acoes nao-imprimir">
+      <button type="button" class="primario" id="btn-imprimir">Imprimir selo</button>
+      <button type="button" id="btn-copiar-chave">Copiar chave</button>
+      <button type="button" id="btn-copiar-link">Copiar link</button>
+      <button type="button" id="btn-baixar-svg">Baixar QR (SVG)</button>
+      <button type="button" id="btn-testar">Abrir validação em nova aba</button>
+    </div>
+    <p class="dica nao-imprimir" id="feedback-copia" aria-live="polite"></p>
+  </section>
+
+  <!-- Publicação do índice -->
+  <section id="publicar" class="cartao oculto nao-imprimir">
+    <h2>Publicar o registro</h2>
+    <p style="margin-bottom:1rem">
+      A chave só funciona depois que o registro estiver publicado. Baixe o arquivo abaixo,
+      substitua <code>docs/atestados.json</code> no repositório e faça o push.
+    </p>
+    <div class="acoes" style="margin-top:0">
+      <button type="button" class="primario" id="btn-baixar-indice">Baixar atestados.json</button>
+    </div>
+    <p class="dica" id="info-indice"></p>
+  </section>
+
+  <p class="rodape nao-imprimir" style="padding-bottom:0">
+    <a href="../">Ir para a página de validação</a>
+  </p>
+
+</main>
+<script type="module" src="emitir.js"></script>
+</body>
+</html>

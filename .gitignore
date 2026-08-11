@@ -1,0 +1,10 @@
+# A chave privada assina os atestados. Se ela for para o repositório, qualquer
+# pessoa passa a conseguir emitir atestados válidos. Nunca commitar.
+chaves-privadas/
+*.private.json
+*.pem
+*.p12
+
+node_modules/
+.DS_Store
+Thumbs.db

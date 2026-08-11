@@ -1,0 +1,16 @@
+{
+  "name": "validador-atestados",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Verificação de atestados por assinatura digital, em site estático (GitHub Pages)",
+  "scripts": {
+    "servir": "node tools/servidor.mjs",
+    "testar": "node tools/testar.mjs",
+    "testar:qr": "node tools/testar-qr.mjs",
+    "chaves": "node tools/gerar-chaves.mjs"
+  },
+  "devDependencies": {
+    "jsqr": "^1.4.0"
+  }
+}

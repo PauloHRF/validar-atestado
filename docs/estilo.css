@@ -1,0 +1,379 @@
+/* Estilo compartilhado entre a página de validação e a de emissão. */
+
+:root {
+  --topo: #434c5c;
+  --topo-texto: #ffffff;
+  --fundo: #f5f6f8;
+  --superficie: #ffffff;
+  --borda: #dde1e6;
+  --borda-campo: #ccd2da;
+  --texto: #2f3a4a;
+  --rotulo: #6f7d8f;
+  --azul: #1e94f0;
+  --azul-escuro: #1878c4;
+  --verde: #21b04b;
+  --vermelho: #d0342c;
+  --alerta-fundo: #fff8e6;
+  --alerta-borda: #d9b338;
+  --alerta-texto: #7a5a05;
+  --raio: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --topo: #2a313d;
+    --fundo: #171a20;
+    --superficie: #21262e;
+    --borda: #363d47;
+    --borda-campo: #424a56;
+    --texto: #e6e9ee;
+    --rotulo: #9aa6b5;
+    --azul: #3fa3f5;
+    --azul-escuro: #6bbcff;
+    --verde: #27a850;
+    --vermelho: #e2564d;
+    --alerta-fundo: #2a2208;
+    --alerta-borda: #b8912a;
+    --alerta-texto: #efd68e;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* --- Barra superior ------------------------------------------------------ */
+
+.topo {
+  background: var(--topo);
+  color: var(--topo-texto);
+  padding: 0 1.25rem;
+  min-height: 65px;
+  display: flex;
+  align-items: center;
+}
+
+.topo-interno {
+  width: 100%;
+  max-width: 78rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 65px;
+}
+
+.topo-titulo {
+  flex: 1;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: .01em;
+}
+.topo-titulo strong { font-weight: 700; }
+
+.botao-topo {
+  flex: none;
+  background: transparent;
+  color: var(--topo-texto);
+  border: 1px solid rgba(255, 255, 255, .55);
+  border-radius: var(--raio);
+  padding: .6rem 1.1rem;
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.botao-topo:hover { background: rgba(255, 255, 255, .12); }
+
+/* Mantém o título centralizado mesmo sem botão à direita. */
+.topo-espacador { flex: none; width: 0; }
+@media (min-width: 48rem) {
+  .topo-espacador.compensa { width: 152px; }
+}
+
+/* --- Faixa de resultado -------------------------------------------------- */
+
+.faixa {
+  color: #fff;
+  padding: .8rem 1rem;
+  text-align: center;
+  font-size: .95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+}
+.faixa.ok  { background: var(--verde); }
+.faixa.erro { background: var(--vermelho); }
+.faixa-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-size: .7rem;
+  line-height: 1;
+  flex: none;
+}
+
+/* --- Conteúdo ------------------------------------------------------------ */
+
+main {
+  max-width: 47rem;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 3rem;
+}
+
+.chamada {
+  text-align: center;
+  font-size: 1.05rem;
+  color: var(--texto);
+  margin: 0 0 3rem;
+}
+
+.coluna { max-width: 28rem; margin: 0 auto; }
+
+h1 { font-size: 1.3rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.02rem; margin: 0 0 .75rem; }
+p  { margin: 0 0 .75rem; }
+
+.subtitulo { color: var(--rotulo); margin-bottom: 1.75rem; }
+
+/* --- Campos -------------------------------------------------------------- */
+
+label, .rotulo-campo {
+  display: block;
+  font-size: .78rem;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+  color: var(--rotulo);
+  margin-bottom: .55rem;
+}
+
+input[type="text"], input[type="date"], input[type="number"], input[type="url"], input[type="file"], textarea, select {
+  width: 100%;
+  padding: .75rem .85rem;
+  border: 1px solid var(--borda-campo);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: .85rem;
+}
+
+/* Chave de 16 dígitos: monoespaçada e espaçada, para conferir dígito a dígito. */
+.campo-chave {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 1.15rem;
+  letter-spacing: .12em;
+  text-align: center;
+}
+.campo-chave::placeholder { letter-spacing: .12em; opacity: .45; }
+
+input:focus-visible, textarea:focus-visible, select:focus-visible,
+button:focus-visible, a:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--azul);
+  outline-offset: 2px;
+}
+
+.erro-campo {
+  color: var(--vermelho);
+  font-size: .85rem;
+  margin: .6rem 0 0;
+  min-height: 1.2em;
+}
+
+.dica { font-size: .8rem; color: var(--rotulo); margin: .35rem 0 0; text-transform: none; letter-spacing: 0; }
+
+.grade { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grade .largo { grid-column: 1 / -1; }
+@media (max-width: 34rem) { .grade { grid-template-columns: 1fr; } }
+
+.linha-check { display: flex; align-items: flex-start; gap: .5rem; }
+.linha-check input { margin-top: .3rem; flex: none; width: auto; }
+.linha-check label { text-transform: none; letter-spacing: 0; font-size: .9rem; color: var(--texto); margin: 0; }
+
+/* --- Botões -------------------------------------------------------------- */
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: var(--raio);
+}
+
+.botao-principal {
+  display: block;
+  width: 100%;
+  margin-top: 2.25rem;
+  background: var(--azul);
+  color: #fff;
+  border: 1px solid var(--azul);
+  padding: .85rem 1rem;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.botao-principal:hover { background: var(--azul-escuro); border-color: var(--azul-escuro); }
+
+.botao-secundario {
+  background: var(--superficie);
+  color: var(--azul);
+  border: 1px solid var(--borda-campo);
+  padding: .8rem 1.4rem;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.botao-secundario:hover { border-color: var(--azul); }
+
+.acoes { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem; }
+.acoes-direita { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+
+/* Botões do emissor, em escala menor que o botão principal do portal. */
+.acoes button {
+  background: var(--superficie);
+  color: var(--texto);
+  border: 1px solid var(--borda-campo);
+  padding: .6rem 1rem;
+  font-size: .85rem;
+  font-weight: 600;
+}
+.acoes button:hover { border-color: var(--azul); }
+.acoes button.primario { background: var(--azul); border-color: var(--azul); color: #fff; }
+.acoes button.primario:hover { background: var(--azul-escuro); border-color: var(--azul-escuro); }
+.acoes button:disabled { opacity: .5; cursor: not-allowed; }
+
+/* --- Cartões ------------------------------------------------------------- */
+
+.cartao {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.cartao-titulo {
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--borda);
+}
+
+.dados-doc { margin: 0; }
+.dados-doc > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  padding: .4rem 0;
+}
+.dados-doc dt { color: var(--rotulo); font-weight: 400; }
+.dados-doc dd { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+
+.aviso {
+  background: var(--alerta-fundo);
+  border: 1px solid var(--alerta-borda);
+  color: var(--alerta-texto);
+  border-radius: 6px;
+  padding: .9rem 1.1rem;
+  font-size: .88rem;
+  margin-bottom: 1.5rem;
+}
+.aviso p:last-child { margin-bottom: 0; }
+
+code, .mono { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: .85em; }
+
+.codigo-bloco {
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: .65rem .75rem;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: .72rem;
+  line-height: 1.45;
+  color: var(--rotulo);
+  max-height: 8rem;
+  overflow-y: auto;
+}
+
+.rodape {
+  color: var(--rotulo);
+  font-size: .82rem;
+  text-align: center;
+  padding: 1rem 1.25rem 2.5rem;
+}
+.rodape a { color: inherit; }
+
+.oculto { display: none !important; }
+
+/* --- QR e selo de impressão ---------------------------------------------- */
+
+.selo {
+  border: 2px solid #000;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #fff;
+  color: #000;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  max-width: 30rem;
+}
+.selo .qr { width: 42mm; height: 42mm; flex: none; }
+.selo .qr svg { width: 100%; height: 100%; display: block; }
+.selo .texto { font-size: 10px; line-height: 1.35; min-width: 0; }
+.selo .texto strong { font-size: 11px; display: block; margin-bottom: 2px; }
+.selo .chave {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  margin-top: 6px;
+  white-space: nowrap;
+}
+
+/* A chave na tela de emissão: grande o bastante para ser copiada no olho. */
+.chave-grande {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: clamp(1.3rem, 5.5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-align: center;
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  padding: 1rem .5rem;
+  margin: 0 0 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+@media print {
+  body { background: #fff; }
+  .nao-imprimir { display: none !important; }
+  .topo { background: #fff; color: #000; border-bottom: 1px solid #000; }
+  .faixa { color: #000; background: #fff !important; border-bottom: 1px solid #000; }
+  .cartao { border-color: #999; break-inside: avoid; }
+  .selo { break-inside: avoid; }
+  main { padding-top: 1.5rem; }
+}

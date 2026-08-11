@@ -1,0 +1,2 @@
+# Mantém LF no repositório, para o Windows não gerar diffs de fim de linha.
+* text=auto eol=lf
