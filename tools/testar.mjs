@@ -207,6 +207,33 @@ console.log(`QR: versão ${qr.version} (${qr.size}x${qr.size} módulos), nível 
 console.log(`Token assinado (guardado cifrado no índice): ${token.length} caracteres`);
 console.log('');
 
+// --- HTML e JS não podem sair de sincronia -------------------------------
+
+// A página é editada à mão com frequência (inclusive pela interface do GitHub).
+// Um elemento removido do HTML não pode derrubar o script: foi exatamente assim
+// que a leitura do QR Code parou de funcionar uma vez, porque o listener de um
+// botão retirado lançava TypeError antes da linha que lê o fragmento da URL.
+{
+  const fs = await import('node:fs/promises');
+  const html = await fs.readFile(resolve(raiz, 'docs/index.html'), 'utf8');
+  const js = await fs.readFile(resolve(raiz, 'docs/validar.js'), 'utf8');
+
+  const idsNoHtml = new Set([...html.matchAll(/id="([^"]+)"/g)].map((m) => m[1]));
+  const obrigatorios = (js.match(/const OBRIGATORIOS = \[([\s\S]*?)\]/)?.[1] ?? '')
+    .match(/'([^']+)'/g)?.map((s) => s.slice(1, -1)) ?? [];
+
+  checar('lista de obrigatórios foi encontrada no script', obrigatorios.length > 0);
+  const faltando = obrigatorios.filter((id) => !idsNoHtml.has(id));
+  checar('todo elemento obrigatório existe no HTML', faltando.length === 0, faltando.join(', '));
+
+  // Acesso direto (`$('x').`) só é permitido para elementos obrigatórios; o
+  // resto tem que passar pelos ajudantes tolerantes ou por checagem explícita.
+  const acessoDireto = [...js.matchAll(/\$\('([^']+)'\)\s*\.(?!\s*\?)/g)].map((m) => m[1]);
+  const desprotegidos = [...new Set(acessoDireto)].filter((id) => !obrigatorios.includes(id));
+  checar('nenhum elemento opcional é acessado sem proteção',
+    desprotegidos.length === 0, desprotegidos.join(', '));
+}
+
 // --- Chaves públicas publicadas não contêm material privado --------------
 
 try {

@@ -16,6 +16,21 @@ import { camposParaExibir, carregarChaves, verificarToken } from './lib/token.js
 
 const $ = (id) => document.getElementById(id);
 
+// Elementos que a página não pode perder sem deixar de funcionar. Conferidos na
+// partida para que a falta de um vire uma mensagem legível, e não um TypeError
+// solto no console.
+const OBRIGATORIOS = [
+  'carregando', 'falha-chaves', 'falha-chaves-detalhe', 'tela-consulta',
+  'form-consulta', 'codigo', 'erro-entrada', 'faixa', 'faixa-icone',
+  'faixa-texto', 'tela-resultado', 'resumo', 'dados',
+];
+
+// Todo o resto é moldura: botões e avisos que podem ser retirados do HTML ao
+// gosto de quem edita a página. Os ajudantes abaixo simplesmente ignoram o que
+// não existir — retirar um botão jamais pode impedir a leitura do QR Code.
+const ligar = (id, evento, fn) => $(id)?.addEventListener(evento, fn);
+const alternar = (id, classe, ativo) => $(id)?.classList.toggle(classe, ativo);
+
 let chaves = null;
 let indice = null;
 let ocupado = false;
@@ -23,6 +38,13 @@ let ocupado = false;
 // --- Inicialização -------------------------------------------------------
 
 async function iniciar() {
+  const ausentes = OBRIGATORIOS.filter((id) => !$(id));
+  if (ausentes.length) {
+    document.body.textContent =
+      `Página incompleta: faltam os elementos ${ausentes.join(', ')} em index.html.`;
+    return;
+  }
+
   try {
     // `no-store` evita que o navegador sirva dados defasados depois de uma
     // emissão ou de uma rotação de chaves.
@@ -53,8 +75,8 @@ async function iniciar() {
     verificarDaCaixa();
   });
   $('codigo').addEventListener('input', aoDigitar);
-  $('btn-nova').addEventListener('click', novaConsulta);
-  $('btn-imprimir').addEventListener('click', () => window.print());
+  ligar('btn-nova', 'click', novaConsulta);
+  ligar('btn-imprimir', 'click', () => window.print());
 
   // A chave chega no fragmento (#) e não na query string: o fragmento nunca é
   // enviado ao servidor, então não entra em log nem em cabeçalho Referer.
@@ -122,8 +144,8 @@ function mostrarFalha(motivo) {
   $('dados').replaceChildren();
   $('tela-resultado').classList.add('oculto');
   $('tela-consulta').classList.remove('oculto');
-  $('btn-nova').classList.add('oculto');
-  $('topo-vazio').classList.remove('oculto');
+  alternar('btn-nova', 'oculto', true);
+  alternar('topo-vazio', 'oculto', false);
   mostrarFaixa('erro', 'Não foi possível validar');
   $('erro-entrada').textContent = motivo;
   window.scrollTo({ top: 0 });
@@ -139,8 +161,11 @@ async function mostrarResultado(entrada) {
 
   // A derivação é lenta de propósito (PBKDF2), então avisa e trava o botão.
   ocupado = true;
-  $('btn-verificar').disabled = true;
-  $('btn-verificar').textContent = 'Verificando…';
+  const botaoVerificar = $('btn-verificar');
+  if (botaoVerificar) {
+    botaoVerificar.disabled = true;
+    botaoVerificar.textContent = 'Verificando…';
+  }
   try {
     const token = await abrirRegistro(digitos, indice);
     if (token === null) {
@@ -164,14 +189,14 @@ async function mostrarResultado(entrada) {
     $('erro-entrada').textContent = '';
     $('tela-consulta').classList.add('oculto');
     $('tela-resultado').classList.remove('oculto');
-    $('btn-nova').classList.remove('oculto');
-    $('topo-vazio').classList.add('oculto');
+    alternar('btn-nova', 'oculto', false);
+    alternar('topo-vazio', 'oculto', true);
     mostrarFaixa('ok', 'Validação concluída');
     window.scrollTo({ top: 0 });
   } finally {
     ocupado = false;
-    $('btn-verificar').disabled = false;
-    $('btn-verificar').textContent = 'Próximo';
+    const botao = $('btn-verificar');
+    if (botao) { botao.disabled = false; botao.textContent = 'Próximo'; }
   }
 }
 
@@ -198,8 +223,8 @@ function novaConsulta() {
   $('erro-entrada').textContent = '';
   $('tela-resultado').classList.add('oculto');
   $('tela-consulta').classList.remove('oculto');
-  $('btn-nova').classList.add('oculto');
-  $('topo-vazio').classList.remove('oculto');
+  alternar('btn-nova', 'oculto', true);
+  alternar('topo-vazio', 'oculto', false);
   esconderFaixa();
 
   // Tira a chave do endereço para não ficar visível na barra nem no histórico.
